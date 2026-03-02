@@ -1,0 +1,57 @@
+name: stripe-surfaces-demo
+services: 
+  nocodb_stripe_surfaces: 
+    depends_on: 
+      root_db_stripe_surfaces_demo: 
+        condition: service_healthy
+    environment: 
+      NC_DB: "pg://root_db_stripe_surfaces_demo:5432?u=postgres&p=password&d=root_db"
+      NC_DISABLE_TELE: "true"
+    image: "nocodb/nocodb:latest"
+    networks:
+      - stripe_surfaces_poc
+    ports:
+      - "8084:8080"
+    restart: always
+    volumes: 
+      - "stripe_surfaces_poc_nc_data:/usr/app/data"
+  n8n_stripe_surfaces_demo:
+    environment:
+      GENERIC_TIMEZONE: "Australia/Sydney"
+      TZ: "Australia/Sydney"
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+      N8N_RUNNERS_ENABLED: "true"
+      N8N_SECURE_COOKIE: "false"
+    image: "docker.n8n.io/n8nio/n8n"
+    networks:
+      - stripe_surfaces_poc
+    ports:
+      - "5682:5678"
+    restart: always
+    volumes:
+      - "stripe_surfaces_n8n_data:/home/node/.n8n"
+      - "./n8n-shared:/shared"
+  root_db_stripe_surfaces_demo: 
+    environment: 
+      POSTGRES_DB: root_db
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+    healthcheck: 
+      interval: 10s
+      retries: 10
+      test: "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""
+      timeout: 2s
+    image: postgres:16.6
+    networks:
+      - stripe_surfaces_poc
+    restart: always
+    volumes: 
+      - "stripe_surfaces_poc_db_data:/var/lib/postgresql/data"
+  
+volumes: 
+  stripe_surfaces_poc_db_data:
+  stripe_surfaces_poc_nc_data:
+  stripe_surfaces_n8n_data:
+networks:
+  stripe_surfaces_poc:
+
