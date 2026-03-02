@@ -11,6 +11,16 @@ npm install
 
 Copy `.env.example` to `.env.local` and fill in the values. Do not commit `.env.local`.
 
+### Authentication with Clerk
+
+This app uses [Clerk](https://clerk.com/) for authentication. To get your API keys:
+
+1. Create a free account at [clerk.com](https://clerk.com/)
+2. Create a new application in the Clerk dashboard
+3. Copy the **Publishable key** and **Secret key** from the API Keys section into your `.env.local`
+
+Clerk's free tier includes 50,000 monthly active users — more than enough for local development and demos.
+
 ### Environment variables
 
 | Variable | Description |
